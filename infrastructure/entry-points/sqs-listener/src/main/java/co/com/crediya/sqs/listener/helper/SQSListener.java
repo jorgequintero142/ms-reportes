@@ -35,7 +35,7 @@ public class SQSListener {
 
     private Flux<Void> listenRetryRepeat() {
         return listen()
-                .doOnError(e -> log.error("Error listening sqs queue", e))
+                .doOnError(e -> log.error("Error listening sqs queue" +properties.queueUrl(), e))
                 .repeat();
     }
 
@@ -46,7 +46,7 @@ public class SQSListener {
                         .tag("operation", operation)
                         .metrics()
                         .then(confirm(message)))
-                .onErrorContinue((e, o) -> log.error("Error listening sqs message", e));
+                .onErrorContinue((e, o) -> log.error("Error listening sqs message "+properties.queueUrl(), e));
     }
 
     private Mono<Void> confirm(Message message) {

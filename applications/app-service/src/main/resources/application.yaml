@@ -20,12 +20,22 @@ management:
     health:
       probes:
         enabled: true
+  health:
+    circuitbreakers:
+      enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+springdoc:
+  api-docs:
+    enabled: true
+    path: "/api-docs"
+  swagger-ui:
+    enabled: true
+    path: "/swagger-ui.html"
 entrypoint:
   sqs:
     region: "us-east-2"
-    queueUrl: "{SQS}"
+    queueUrl: "https://sqs.us-east-2.amazonaws.com/905317843748/actualizar-reporte"
     waitTimeSeconds: 20
     maxNumberOfMessages: 10
     visibilityTimeoutSeconds: 10
@@ -34,3 +44,28 @@ aws:
   region: "us-east-2"
   dynamodb:
     endpoint: "https://dynamodb.us-east-2.amazonaws.com"
+adapter:
+  restconsumer:
+    timeout: 5000
+    url: "http://autenticacion:8080"
+resilience4j:
+  circuitbreaker:
+    instances:
+      testGet:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: "2s"
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: "10s"
+      testPost:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: "2s"
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: "10s"
